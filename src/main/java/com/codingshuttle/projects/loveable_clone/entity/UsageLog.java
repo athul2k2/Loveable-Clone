@@ -22,7 +22,7 @@ public class UsageLog {
     Integer tokenUsed;
     Integer durationMs;
 
-    String metaData;
+    String metaData; // JSON of { model_used , Prompt_used }
 
     Instant createdAt;
 

@@ -12,8 +12,8 @@ import java.time.Instant;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProjectMember {
-
-    ProjectMemberId id;
+    // this is like a join table for project  and user
+    ProjectMemberId id; // this id contain both
 
     Project project;
     User user;

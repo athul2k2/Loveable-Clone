@@ -15,7 +15,7 @@ public class ProjectFile {
     Long id;
     Project project;
     String path;
-    String minioObjectKey;
+    String minioObjectKey; // for minIO storage
 
     Instant createdAt;
     Instant updatedAt;
