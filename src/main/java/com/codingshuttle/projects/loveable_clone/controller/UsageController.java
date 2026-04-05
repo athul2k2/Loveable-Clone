@@ -4,7 +4,6 @@ import com.codingshuttle.projects.loveable_clone.dto.subscription.PlanLimitsResp
 import com.codingshuttle.projects.loveable_clone.dto.subscription.UsageTodayResponse;
 import com.codingshuttle.projects.loveable_clone.service.UsageService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
