@@ -29,8 +29,6 @@ public class Subscription {
     Boolean cancelAtPeriodEnd;
 
     Instant createdAt;
-
     Instant updatedAt;
-
 
 }
