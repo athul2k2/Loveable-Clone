@@ -12,6 +12,7 @@ import com.codingshuttle.projects.loveable_clone.repository.ProjectMemberReposit
 import com.codingshuttle.projects.loveable_clone.repository.ProjectRepository;
 import com.codingshuttle.projects.loveable_clone.repository.UserRepository;
 import com.codingshuttle.projects.loveable_clone.service.ProjectMemberService;
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -28,6 +29,7 @@ import static java.util.stream.Collectors.toList;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@Transactional
 public class ProjectMemberServiceImpl implements ProjectMemberService {
 
     ProjectRepository projectRepository;
@@ -81,8 +83,20 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
     }
 
     @Override
-    public MemberResponse updateMemberRole(Long projectId, Long memberId, Long userid, UpdateMemberRoleRequest request) {
-        return null;
+    public MemberResponse updateMemberRole(Long projectId, Long memberId, Long userId, UpdateMemberRoleRequest request) {
+        Project project = getAccessibleProjectId(projectId, userId);
+        if(!project.getOwner().getId().equals(userId)){
+            throw new RuntimeException("Not allowed ");
+        }
+
+        ProjectMemberId projectMemberId = new ProjectMemberId(projectId,memberId);
+        ProjectMember projectMember = projectMemberRepository.findById(projectMemberId).orElseThrow();
+
+        projectMember.setProjectRole(request.role());
+
+        projectMemberRepository.save(projectMember);
+
+        return projectMemeberMapper.toProjectMemberResponseFromMember(projectMember);
     }
 
     @Override
