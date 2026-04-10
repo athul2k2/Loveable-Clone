@@ -1,9 +1,12 @@
 package com.codingshuttle.projects.loveable_clone.dto.member;
 
 import com.codingshuttle.projects.loveable_clone.enums.ProjectRole;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public record InviteMemberRequest(
-        String email,
-        ProjectRole role
+        @Email @NotBlank String email,
+        @NotNull  ProjectRole role
 ) {
 }
