@@ -4,6 +4,7 @@ import com.codingshuttle.projects.loveable_clone.dto.member.InviteMemberRequest;
 import com.codingshuttle.projects.loveable_clone.dto.member.MemberResponse;
 import com.codingshuttle.projects.loveable_clone.dto.member.UpdateMemberRoleRequest;
 import com.codingshuttle.projects.loveable_clone.service.ProjectMemberService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public class ProjectMemberController {
 
     @PostMapping
     public ResponseEntity<MemberResponse> invitedMember(@PathVariable Long projectId,
-                                                        @RequestBody InviteMemberRequest request ){
+                                                        @RequestBody @Valid InviteMemberRequest request ){
         Long userId = 1L;
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 projectMemberService.inviteMember(projectId,request,userId)
@@ -36,7 +37,7 @@ public class ProjectMemberController {
     @PatchMapping("/{memberId}")
     public ResponseEntity<MemberResponse> updateMemberRole(@PathVariable Long projectId,
                                                            @PathVariable Long memberId,
-                                                           @RequestBody UpdateMemberRoleRequest request
+                                                           @RequestBody @Valid UpdateMemberRoleRequest request
     ){
         Long userId = 1L;
         return ResponseEntity.ok(projectMemberService.updateMemberRole(projectId,memberId,userId,request));
