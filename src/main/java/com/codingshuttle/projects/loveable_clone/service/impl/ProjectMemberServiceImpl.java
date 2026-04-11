@@ -41,23 +41,14 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
     public List<MemberResponse> getProjectMembers(Long projectId, Long userId) {
         Project project = getAccessibleProjectId(projectId, userId);
 
-        List<MemberResponse> memberResponseList = new ArrayList<>();
-        memberResponseList.add(projectMemeberMapper.toProjectMemberResponseFromOwner(project.getOwner()));
-
-        memberResponseList.addAll(
-                projectMemberRepository.findByIdProjectId(projectId).stream()
+       return projectMemberRepository.findByIdProjectId(projectId).stream()
                         .map(projectMemeberMapper::toProjectMemberResponseFromMember)
-                        .toList()
-        );
-        return memberResponseList;
+                        .toList();
     }
 
     @Override
     public MemberResponse inviteMember(Long projectId, InviteMemberRequest request, Long userId) {
         Project project = getAccessibleProjectId(projectId, userId);
-        if(!project.getOwner().getId().equals(userId)){
-            throw new RuntimeException("Not allowed ");
-        }
 
         User invitee = userRepository.findByEmail(request.email()).orElseThrow();
         if(invitee.getId().equals(userId)){
@@ -85,9 +76,6 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
     @Override
     public MemberResponse updateMemberRole(Long projectId, Long memberId, Long userId, UpdateMemberRoleRequest request) {
         Project project = getAccessibleProjectId(projectId, userId);
-        if(!project.getOwner().getId().equals(userId)){
-            throw new RuntimeException("Not allowed ");
-        }
 
         ProjectMemberId projectMemberId = new ProjectMemberId(projectId,memberId);
         ProjectMember projectMember = projectMemberRepository.findById(projectMemberId).orElseThrow();
@@ -102,9 +90,6 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
     @Override
     public void removeProjectMember(Long projectId, Long userId, Long memberId) {
         Project project = getAccessibleProjectId(projectId, userId);
-        if(!project.getOwner().getId().equals(userId)){
-            throw new RuntimeException("Not allowed ");
-        }
 
         ProjectMemberId projectMemberId = new ProjectMemberId(projectId,memberId);
         if(!projectMemberRepository.existsById(projectMemberId)){
