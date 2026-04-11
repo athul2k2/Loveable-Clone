@@ -14,17 +14,12 @@ import com.codingshuttle.projects.loveable_clone.repository.UserRepository;
 import com.codingshuttle.projects.loveable_clone.service.ProjectMemberService;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
@@ -50,7 +45,7 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
     public MemberResponse inviteMember(Long projectId, InviteMemberRequest request, Long userId) {
         Project project = getAccessibleProjectId(projectId, userId);
 
-        User invitee = userRepository.findByEmail(request.email()).orElseThrow();
+        User invitee = userRepository.findByUsername(request.username()).orElseThrow();
         if(invitee.getId().equals(userId)){
             throw new RuntimeException("Cannot invite yourself");
         }
