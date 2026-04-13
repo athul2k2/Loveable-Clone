@@ -1,6 +1,7 @@
 package com.codingshuttle.projects.loveable_clone.security;
 
 import com.codingshuttle.projects.loveable_clone.entity.User;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +11,7 @@ import javax.crypto.SecretKey;
 import javax.xml.crypto.Data;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
 
 @Component
@@ -31,4 +33,15 @@ public class AuthUtil {
                 .compact();
     }
 
+    public JwtUserPrinciple verifyAccessToken(String token){
+        Claims claims = Jwts.parser()
+                .verifyWith(getSecretKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+
+        Long userId = Long.parseLong(claims.get("userId", String.class));
+        String username = claims.getSubject();
+        return new JwtUserPrinciple(userId,username,new ArrayList<>());
+    }
 }
