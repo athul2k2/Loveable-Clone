@@ -10,9 +10,9 @@ import static com.codingshuttle.projects.loveable_clone.enums.ProjectPermission.
 @RequiredArgsConstructor
 @Getter
 public enum ProjectRole {
-    EDITOR(VIEW,EDIT),
-    VIEWER(VIEW),
-    OWNER(VIEW,EDIT,DELETE,MANAGE_MEMBERS);
+    EDITOR(VIEW,EDIT,VIEW_MEMBERS),
+    VIEWER(VIEW,VIEW_MEMBERS),
+    OWNER(VIEW,EDIT,DELETE,MANAGE_MEMBERS,VIEW_MEMBERS);
 
     ProjectRole(ProjectPermission... permissions){
         this.permissions = Set.of(permissions);
