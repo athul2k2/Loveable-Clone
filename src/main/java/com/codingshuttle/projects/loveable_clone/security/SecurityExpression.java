@@ -1,5 +1,6 @@
 package com.codingshuttle.projects.loveable_clone.security;
 
+import com.codingshuttle.projects.loveable_clone.enums.ProjectPermission;
 import com.codingshuttle.projects.loveable_clone.enums.ProjectRole;
 import com.codingshuttle.projects.loveable_clone.repository.ProjectMemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ public class SecurityExpression {
         Long userId = authUtil.getCurrentUserId();
 
         return projectMemberRepository.findRoleByProjectIdAndUserId(projectId,userId)
-                .map(role -> role.equals(ProjectRole.OWNER) || role.equals(ProjectRole.VIEWER) || role.equals(ProjectRole.EDITOR))
+                .map(role -> role.getPermissions().contains(ProjectPermission.VIEW))
                 .orElse(false);
 
 
@@ -26,7 +27,7 @@ public class SecurityExpression {
         Long userId = authUtil.getCurrentUserId();
 
         return projectMemberRepository.findRoleByProjectIdAndUserId(projectId,userId)
-                .map(role -> role.equals(ProjectRole.OWNER) || role.equals(ProjectRole.EDITOR))
+                .map(role -> role.getPermissions().contains(ProjectPermission.EDIT))
                 .orElse(false);
     }
 }
