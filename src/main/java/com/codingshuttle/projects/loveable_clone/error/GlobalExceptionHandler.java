@@ -1,12 +1,17 @@
 package com.codingshuttle.projects.loveable_clone.error;
 
+import com.codingshuttle.projects.loveable_clone.security.JwtAuthFilter;
+import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @Slf4j
@@ -35,6 +40,35 @@ public class GlobalExceptionHandler {
         log.error(apiError.toString(),ex);
         return ResponseEntity.status(apiError.status()).body(apiError);
     }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ApiError> handleUsernameNotFoundException(UsernameNotFoundException ex ){
+        ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, "Username not found with username"+ex.getMessage());
+        log.error(apiError.toString(),ex);
+        return ResponseEntity.status(apiError.status()).body(apiError);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ApiError> handleAuthenticationException(AuthenticationException ex ){
+        ApiError apiError = new ApiError(HttpStatus.UNAUTHORIZED, "Authentication failed:"+ ex.getMessage());
+        log.error(apiError.toString(),ex);
+        return ResponseEntity.status(apiError.status()).body(apiError);
+    }
+
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<ApiError> handleAuthenticationException(JwtException ex ){
+        ApiError apiError = new ApiError(HttpStatus.UNAUTHORIZED, "Invalid JWT token:"+ ex.getMessage());
+        log.error(apiError.toString(),ex);
+        return ResponseEntity.status(apiError.status()).body(apiError);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiError> handleAuthenticationException(AccessDeniedException ex ){
+        ApiError apiError = new ApiError(HttpStatus.UNAUTHORIZED, "Access denied: Insufficient permissions"+ ex.getMessage());
+        log.error(apiError.toString(),ex);
+        return ResponseEntity.status(apiError.status()).body(apiError);
+    }
+
 
 
 
