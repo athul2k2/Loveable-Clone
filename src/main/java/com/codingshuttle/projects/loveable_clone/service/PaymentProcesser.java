@@ -3,11 +3,15 @@ package com.codingshuttle.projects.loveable_clone.service;
 import com.codingshuttle.projects.loveable_clone.dto.subscription.CheckoutRequest;
 import com.codingshuttle.projects.loveable_clone.dto.subscription.CheckoutResponse;
 import com.codingshuttle.projects.loveable_clone.dto.subscription.PortalResponse;
-import com.codingshuttle.projects.loveable_clone.dto.subscription.SubscriptionResponse;
-import org.jspecify.annotations.Nullable;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-public interface SubscriptionService {
 
-     SubscriptionResponse getCurrentSubscription(Long userId);
+public interface PaymentProcesser {
+
+    CheckoutResponse createCheckoutSessionUrl(CheckoutRequest request);
+
+    PortalResponse openCustomerPortal(Long userId);
 
 }

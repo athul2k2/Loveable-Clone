@@ -3,9 +3,9 @@ spring:
     name: loveable-clone
 
   datasource:
-    url: jdbc:postgresql://localhost:9000/testDB
-    username: testUser
-    password: password
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -18,4 +18,9 @@ spring:
         format_sql: true
 
 jwt:
-  secret-key: as17934832bnjkaskdfa023bv9s98n23bj32jn5bj24
+  secret-key: ${JWT_SECRET_KEY}
+
+stripe:
+  secret: ${STRIPE_SECRET_KEY}
+
+client.url: http://localhost:8080
