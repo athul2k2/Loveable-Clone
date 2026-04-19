@@ -23,7 +23,7 @@ jwt:
 stripe:
   api:
     secret: ${STRIPE_SECRET_KEY}
-  webhook:
+  webhooks:
     secret: ${STRIPE_WEBHOOK_SECRET_KEY}
 
 
