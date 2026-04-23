@@ -44,7 +44,7 @@ public class SubscriptionServiceImpl  implements SubscriptionService {
 
     @Override
     public void activateSubscription(Long userId, Long planId, String subscriptionId, String customerId) {
-        boolean exists = subscriptionRepository.existsByStripeSbuscriptionId(subscriptionId);
+        boolean exists = subscriptionRepository.existsByStripeSubscriptionId(subscriptionId);
         if(exists) return;
 
         User user = getUser(userId);
@@ -79,7 +79,7 @@ public class SubscriptionServiceImpl  implements SubscriptionService {
         subscription.setCurrentPeriodStart(newStart);
         subscription.setCurrentPeriodEnd(periodEnd);
 
-        if(subscription.getStatus() == SubscriptionStatus.PAST_DUE) {
+        if(subscription.getStatus() == SubscriptionStatus.PAST_DUE || subscription.getStatus() == SubscriptionStatus.INCOMPLETE) {
             subscription.setStatus(SubscriptionStatus.ACTIVE);
         }
 
