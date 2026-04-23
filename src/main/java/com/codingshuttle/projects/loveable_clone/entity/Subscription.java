@@ -3,9 +3,7 @@ package com.codingshuttle.projects.loveable_clone.entity;
 
 import com.codingshuttle.projects.loveable_clone.enums.SubscriptionStatus;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -16,6 +14,9 @@ import java.time.Instant;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Subscription {
 
     @Id
