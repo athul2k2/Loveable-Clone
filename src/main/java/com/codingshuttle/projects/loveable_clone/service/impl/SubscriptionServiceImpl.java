@@ -8,6 +8,7 @@ import com.codingshuttle.projects.loveable_clone.enums.SubscriptionStatus;
 import com.codingshuttle.projects.loveable_clone.error.ResourceNotFoundException;
 import com.codingshuttle.projects.loveable_clone.mapper.SubscriptionMapper;
 import com.codingshuttle.projects.loveable_clone.repository.PlanRepository;
+import com.codingshuttle.projects.loveable_clone.repository.ProjectMemberRepository;
 import com.codingshuttle.projects.loveable_clone.repository.SubscriptionRepository;
 import com.codingshuttle.projects.loveable_clone.repository.UserRepository;
 import com.codingshuttle.projects.loveable_clone.security.AuthUtil;
@@ -29,6 +30,8 @@ public class SubscriptionServiceImpl  implements SubscriptionService {
     private final SubscriptionMapper subscriptionMapper;
     private final UserRepository userRepository;
     private final PlanRepository planRepository;
+    private final ProjectMemberRepository projectMemberRepository;
+
 
     @Override
     public SubscriptionResponse getCurrentSubscription() {
@@ -136,6 +139,19 @@ public class SubscriptionServiceImpl  implements SubscriptionService {
         subscriptionRepository.save(subscription);
         // notify user via mail
 
+    }
+
+    private  final Integer FREE_TIER_PROJECTS_ALLOWED = 1;
+
+    @Override
+    public boolean canCreateNewProject() {
+        Long userId = authUtil.getCurrentUserId();
+        SubscriptionResponse currentSubscription = getCurrentSubscription();
+        int countOfOwnedProjects = projectMemberRepository.countProjectOwnedByUser(userId);
+        if(currentSubscription.plan() == null ){
+           return countOfOwnedProjects < FREE_TIER_PROJECTS_ALLOWED;
+        }
+        return countOfOwnedProjects < currentSubscription.plan().maxProject();
     }
 
     //Utility Methods
