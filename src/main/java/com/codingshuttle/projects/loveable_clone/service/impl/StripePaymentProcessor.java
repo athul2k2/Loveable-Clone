@@ -6,6 +6,7 @@ import com.codingshuttle.projects.loveable_clone.dto.subscription.PortalResponse
 import com.codingshuttle.projects.loveable_clone.entity.Plan;
 import com.codingshuttle.projects.loveable_clone.entity.User;
 import com.codingshuttle.projects.loveable_clone.enums.SubscriptionStatus;
+import com.codingshuttle.projects.loveable_clone.error.BadRequestException;
 import com.codingshuttle.projects.loveable_clone.error.ResourceNotFoundException;
 import com.codingshuttle.projects.loveable_clone.repository.PlanRepository;
 import com.codingshuttle.projects.loveable_clone.repository.UserRepository;
@@ -84,7 +85,25 @@ public class StripePaymentProcessor implements PaymentProcesser {
 
     @Override
     public PortalResponse openCustomerPortal() {
-        return null;
+        Long userId = authUtil.getCurrentUserId();
+        User user = getUser(userId);
+        String stripeCustomerId = user.getStripeCustomerId();
+
+        if(stripeCustomerId == null || stripeCustomerId.isEmpty()) {
+            throw  new BadRequestException("User does not have a stripe customer id, UserI: "+userId);
+        }
+
+        try {
+            var portalSession = com.stripe.model.billingportal.Session.create(
+                    com.stripe.param.billingportal.SessionCreateParams.builder()
+                            .setCustomer(stripeCustomerId)
+                            .setReturnUrl(fontendUrl)
+                            .build()
+            );
+            return new PortalResponse(portalSession.getUrl());
+        } catch (StripeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -93,8 +112,8 @@ public class StripePaymentProcessor implements PaymentProcesser {
 
         switch (type){
             case "checkout.session.completed" -> handleCheckoutSessionCompleted((Session) stripeObject,metadata); // one-time , on checkout completed
-            case "customer.subscription.update" -> handleCustomerSubscriptionUpdated((Subscription) stripeObject); // when user cancels, upgrades or any updates
-            case "customer.subscription.delete" -> handleCustomerSubscriptionDeleted((Subscription) stripeObject); // whne subscription end , revoke the service
+            case "customer.subscription.updated" -> handleCustomerSubscriptionUpdated((Subscription) stripeObject); // when user cancels, upgrades or any updates
+            case "customer.subscription.deleted" -> handleCustomerSubscriptionDeleted((Subscription) stripeObject); // whne subscription end , revoke the service
             case "invoice.paid" -> handleInvoicePaid((Invoice) stripeObject); // when invoice is paid
             case "invoice.payment_failed" -> handleInvoicePaymentFailed((Invoice) stripeObject); // when invoice is not paid , makr as PAST_DUE
             default -> log.debug("Ignoring the event {}:",type);

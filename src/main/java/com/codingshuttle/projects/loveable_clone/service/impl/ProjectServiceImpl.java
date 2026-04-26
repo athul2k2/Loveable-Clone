@@ -8,6 +8,7 @@ import com.codingshuttle.projects.loveable_clone.entity.ProjectMember;
 import com.codingshuttle.projects.loveable_clone.entity.ProjectMemberId;
 import com.codingshuttle.projects.loveable_clone.entity.User;
 import com.codingshuttle.projects.loveable_clone.enums.ProjectRole;
+import com.codingshuttle.projects.loveable_clone.error.BadRequestException;
 import com.codingshuttle.projects.loveable_clone.error.ResourceNotFoundException;
 import com.codingshuttle.projects.loveable_clone.mapper.ProjectMapper;
 import com.codingshuttle.projects.loveable_clone.repository.ProjectMemberRepository;
@@ -15,6 +16,7 @@ import com.codingshuttle.projects.loveable_clone.repository.ProjectRepository;
 import com.codingshuttle.projects.loveable_clone.repository.UserRepository;
 import com.codingshuttle.projects.loveable_clone.security.AuthUtil;
 import com.codingshuttle.projects.loveable_clone.service.ProjectService;
+import com.codingshuttle.projects.loveable_clone.service.SubscriptionService;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -36,14 +38,19 @@ public class ProjectServiceImpl implements ProjectService {
     ProjectMapper projectMapper;
     ProjectMemberRepository projectMemberRepository;
     AuthUtil authUtil;
+    SubscriptionService subscriptionService;
 
     @Override
     public ProjectResponse createProject(ProjectRequest request) {
+        if(!subscriptionService.canCreateNewProject()) {
+            throw new BadRequestException("User cannot create a New project with current plan , Upgrade plan now");
+        }
         Long userId = authUtil.getCurrentUserId();
         User owner = userRepository.getReferenceById(userId);
 //        User owner = userRepository.findById(userId).orElseThrow(
 //                () ->new ResourceNotFoundException("User",userId.toString())
 //        );
+
 
         Project project = Project.builder()
                 .name(request.name())
